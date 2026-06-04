@@ -22,7 +22,7 @@ set -euo pipefail
 : "${N_DATA_WORKERS:=4}"
 
 # Output roots
-# : "${OUTPUT_ROOT:=./logs/profile_bach}"
+# : "${OUTPUT_ROOT:=./logs/dino_vits16/offline/bach}"
 # : "${EMBEDDINGS_ROOT:=./data/embeddings_profile_bach}"
 : "${PROFILE_ROOT:=./profiles/bach}"
 
@@ -58,8 +58,8 @@ echo "CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES}"
 echo "MODEL_NAME=${MODEL_NAME}"
 echo "N_RUNS=${N_RUNS}, MAX_STEPS=${MAX_STEPS}"
 echo "PREDICT_BATCH_SIZE=${PREDICT_BATCH_SIZE}, BATCH_SIZE=${BATCH_SIZE}, N_DATA_WORKERS=${N_DATA_WORKERS}"
-echo "OUTPUT_ROOT=${OUTPUT_ROOT}"
-echo "EMBEDDINGS_ROOT=${EMBEDDINGS_ROOT}"
+# echo "OUTPUT_ROOT=${OUTPUT_ROOT}"
+# echo "EMBEDDINGS_ROOT=${EMBEDDINGS_ROOT}"
 echo "PROFILE_ROOT=${PROFILE_ROOT}"
 echo
 

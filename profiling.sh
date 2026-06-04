@@ -23,7 +23,7 @@ set -euo pipefail
 
 # Output roots
 # : "${OUTPUT_ROOT:=./logs/dino_vits16/offline/bach}"
-# : "${EMBEDDINGS_ROOT:=./data/embeddings_profile_bach}"
+: "${EMBEDDINGS_ROOT:=./data/embeddings/universal}"
 : "${PROFILE_ROOT:=./profiles/bach}"
 
 # Toggle heavy passes
@@ -59,7 +59,7 @@ echo "MODEL_NAME=${MODEL_NAME}"
 echo "N_RUNS=${N_RUNS}, MAX_STEPS=${MAX_STEPS}"
 echo "PREDICT_BATCH_SIZE=${PREDICT_BATCH_SIZE}, BATCH_SIZE=${BATCH_SIZE}, N_DATA_WORKERS=${N_DATA_WORKERS}"
 # echo "OUTPUT_ROOT=${OUTPUT_ROOT}"
-# echo "EMBEDDINGS_ROOT=${EMBEDDINGS_ROOT}"
+echo "EMBEDDINGS_ROOT=${EMBEDDINGS_ROOT}"
 echo "PROFILE_ROOT=${PROFILE_ROOT}"
 echo
 
@@ -85,6 +85,7 @@ fi
 
 if [[ "${RUN_NSYS}" == "1" ]]; then
   echo "=== [2/3] Nsight Systems: predict_fit end-to-end ==="
+  rm -rf "${EMBEDDINGS_ROOT}/${MODEL_NAME}/bach"
   nsys profile \
     --trace=cuda,nvtx,osrt \
     --sample=cpu \
@@ -104,13 +105,14 @@ fi
 
 if [[ "${RUN_NCU}" == "1" ]]; then
   echo "=== [3/3] Nsight Compute: predict kernel metrics ==="
+  rm -rf "${EMBEDDINGS_ROOT}/${MODEL_NAME}/bach"
   ncu \
     --target-processes all \
     --set full \
     --metrics \
 sm__pipe_tensor_cycles_active.avg.pct_of_peak_sustained_elapsed,smsp__inst_executed_pipe_tensor.sum,sm__throughput.avg.pct_of_peak_sustained_elapsed \
     -o "${NCU_DIR}/bach_predict" \
-    python -m eva predict --config "${CONFIG}"
+    python -m eva predict_fit --config "${CONFIG}"
 fi
 
 ############################################

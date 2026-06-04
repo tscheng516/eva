@@ -74,7 +74,6 @@ python -m eva predict_fit \
   --trainer.init_args.profiler.init_args.filename bach_predict_fit \
   --trainer.init_args.profiler.init_args.export_to_chrome true \
   --trainer.init_args.profiler.init_args.record_shapes true \
-  --trainer.init_args.profiler.init_args.with_flops true \
   --trainer.init_args.profiler.init_args.emit_nvtx true
 
 ############################################

@@ -67,6 +67,7 @@ echo
 # 1) PyTorch Profiler pass
 ############################################
 echo "=== [1/3] PyTorch Profiler: predict_fit ==="
+rm -rf "${EMBEDDINGS_ROOT}/${MODEL_NAME}/bach"
 python -m eva predict_fit \
   --config "${CONFIG}" \
   --trainer.init_args.profiler.class_path lightning.pytorch.profilers.PyTorchProfiler \

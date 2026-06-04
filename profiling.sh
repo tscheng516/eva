@@ -19,7 +19,7 @@ set -euo pipefail
 : "${BATCH_SIZE:=256}"
 
 # Data loader workers
-: "${N_DATA_WORKERS:=4}"
+: "${N_DATA_WORKERS:=16}"
 
 # Output roots
 # : "${OUTPUT_ROOT:=./logs/dino_vits16/offline/bach}"

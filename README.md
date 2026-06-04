@@ -190,15 +190,14 @@ of the repo, which can be both locally stored or remote.
 
 Offline **classification** `DINO ViT-S/16` on the `BACH` dataset:
 ```sh
-# set the model architecture
+export CUDA_VISIBLE_DEVICES="2,3,4,5" 
 DOWNLOAD_DATA=true \
 MODEL_NAME=universal/vit_small_patch16_224_dino \
-\
-# execute the offline evaluation pipeline with the BACH dataset config
 eva predict_fit \
-    --config https://raw.githubusercontent.com/kaiko-ai/ \
-             eva/main/configs/vision/pathology/ \
-             offline/classification/bach.yaml
+    --config https://raw.githubusercontent.com/kaiko-ai/eva/main/configs/vision/pathology/offline/classification/bach.yaml
+
+#alternatively
+MODEL_NAME=universal/vit_small_patch16_224_dino eva predict_fit --config configs/vision/pathology/offline/classification/bach.yaml
 ```
 
 Online **segmentation** of `DINO ViT-S/16` on the `MoNuSAC` dataset with the `ConvDecoderWithImage` decoder:

@@ -182,5 +182,5 @@ cython_debug/
 !tests/eva/assets/vision/datasets/cc_ccii/CC-CCII_public/data/*
 
 
-# SLURM
+# SLURM/script files
 *.sbatch

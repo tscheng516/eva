@@ -12,7 +12,7 @@ set -euo pipefail
 : "${N_RUNS:=1}" # for profiling
 : "${MAX_STEPS:=12500}"
 
-# For per-slide wall-time in predict: use batch size 1
+# For per-slide wall-time in predict
 : "${PREDICT_BATCH_SIZE:=64}"
 
 # Fit stage batch size (embeddings-based training)
@@ -75,7 +75,7 @@ python -m eva predict_fit \
   --trainer.init_args.profiler.init_args.filename bach_predict_fit \
   --trainer.init_args.profiler.init_args.export_to_chrome true \
   --trainer.init_args.profiler.init_args.record_shapes true \
-  --trainer.init_args.profiler.init_args.emit_nvtx true
+  --trainer.init_args.profiler.init_args.emit_nvtx false
 
 ############################################
 # 2) Nsight Systems pass (end-to-end)

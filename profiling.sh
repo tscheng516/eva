@@ -10,10 +10,10 @@ set -euo pipefail
 
 # Keep short for profiling baseline
 : "${N_RUNS:=1}" # for profiling
-: "${MAX_STEPS:=10}"
+: "${MAX_STEPS:=100}"
 
 # For per-slide wall-time in predict
-: "${PREDICT_BATCH_SIZE:=64}"
+: "${PREDICT_BATCH_SIZE:=256}"
 
 # Fit stage batch size (embeddings-based training)
 : "${BATCH_SIZE:=256}"

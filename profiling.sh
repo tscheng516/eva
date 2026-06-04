@@ -13,13 +13,13 @@ set -euo pipefail
 : "${MAX_STEPS:=12500}"
 
 # For per-slide wall-time in predict: use batch size 1
-# : "${PREDICT_BATCH_SIZE:=64}"
+: "${PREDICT_BATCH_SIZE:=64}"
 
 # Fit stage batch size (embeddings-based training)
-# : "${BATCH_SIZE:=256}"
+: "${BATCH_SIZE:=256}"
 
 # Data loader workers
-# : "${N_DATA_WORKERS:=4}"
+: "${N_DATA_WORKERS:=4}"
 
 # Output roots
 # : "${OUTPUT_ROOT:=./logs/profile_bach}"

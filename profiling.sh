@@ -10,25 +10,25 @@ set -euo pipefail
 
 # Keep short for profiling baseline
 : "${N_RUNS:=1}" # for profiling
-: "${MAX_STEPS:=100}"
+: "${MAX_STEPS:=12500}"
 
 # For per-slide wall-time in predict
-: "${PREDICT_BATCH_SIZE:=256}"
+: "${PREDICT_BATCH_SIZE:=64}"
 
 # Fit stage batch size (embeddings-based training)
 : "${BATCH_SIZE:=256}"
 
 # Data loader workers
-: "${N_DATA_WORKERS:=16}"
+: "${N_DATA_WORKERS:=4}"
 
 # Output roots
 # : "${OUTPUT_ROOT:=./logs/dino_vits16/offline/bach}"
 : "${EMBEDDINGS_ROOT:=./data/embeddings/universal}"
-: "${PROFILE_ROOT:=./profiles/bach}"
+: "${PROFILE_ROOT:=./profiles/bach0}"
 
 # Toggle heavy passes
 : "${RUN_NSYS:=1}"
-: "${RUN_NCU:=1}"
+: "${RUN_NCU:=0}"
 
 ############################################
 # Paths

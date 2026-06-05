@@ -65,6 +65,7 @@ class SegmentationEmbeddingsWriter(base.EmbeddingsWriter):
                 grouped_embeddings.append(batch_list)
             return grouped_embeddings
 
+        tensor = self._apply_preprocessor(tensor)
         embeddings = self._backbone(tensor) if self._backbone else tensor
         if isinstance(embeddings, list):
             embeddings = _get_grouped_embeddings(embeddings)

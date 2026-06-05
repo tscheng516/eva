@@ -1,6 +1,6 @@
 """Vision data transforms."""
 
-from eva.vision.data.transforms.common import ResizeAndCrop, Squeeze
+from eva.vision.data.transforms.common import ResizeAndCrop, ResizeAndCropTriton, Squeeze
 from eva.vision.data.transforms.croppad import (
     CropForeground,
     RandCropByLabelClasses,
@@ -19,6 +19,7 @@ from eva.vision.data.transforms.utility import EnsureChannelFirst
 __all__ = [
     "Resize",
     "ResizeAndCrop",
+    "ResizeAndCropTriton",
     "Squeeze",
     "CropForeground",
     "RandCropByLabelClasses",

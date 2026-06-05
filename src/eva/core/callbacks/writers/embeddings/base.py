@@ -3,7 +3,7 @@
 import abc
 import io
 import os
-from typing import Any, Dict, List, Sequence
+from typing import Any, Callable, Dict, List, Sequence
 
 import lightning.pytorch as pl
 import torch
@@ -28,6 +28,7 @@ class EmbeddingsWriter(callbacks.BasePredictionWriter, abc.ABC):
         self,
         output_dir: str,
         backbone: nn.Module | None = None,
+        preprocessor: Callable[[torch.Tensor], torch.Tensor] | None = None,
         dataloader_idx_map: Dict[int, str] | None = None,
         metadata_keys: List[str] | None = None,
         overwrite: bool = False,
@@ -43,6 +44,8 @@ class EmbeddingsWriter(callbacks.BasePredictionWriter, abc.ABC):
             output_dir: The directory where the embeddings will be saved.
             backbone: A model to be used as feature extractor. If `None`,
                 it will be expected that the input batch returns the features directly.
+            preprocessor: Optional callable to preprocess the prediction tensor before
+                extracting embeddings (e.g. GPU batch transforms for predict pipelines).
             dataloader_idx_map: A dictionary mapping dataloader indices to their respective
                 names (e.g. train, val, test).
             metadata_keys: An optional list of keys to extract from the batch metadata and store
@@ -60,6 +63,7 @@ class EmbeddingsWriter(callbacks.BasePredictionWriter, abc.ABC):
 
         self._output_dir = output_dir
         self._backbone = backbone
+        self._preprocessor = preprocessor
         self._dataloader_idx_map = dataloader_idx_map or {}
         self._overwrite = overwrite
         self._save_every_n = save_every_n
@@ -98,6 +102,10 @@ class EmbeddingsWriter(callbacks.BasePredictionWriter, abc.ABC):
         if self._backbone is not None:
             self._backbone = self._backbone.to(pl_module.device)
             self._backbone.eval()
+
+        if isinstance(self._preprocessor, nn.Module):
+            self._preprocessor = self._preprocessor.to(pl_module.device)
+            self._preprocessor.eval()
 
     @override
     def write_on_batch_end(
@@ -200,6 +208,16 @@ class EmbeddingsWriter(callbacks.BasePredictionWriter, abc.ABC):
     @abc.abstractmethod
     def _get_embeddings(self, tensor: torch.Tensor) -> torch.Tensor | List[List[torch.Tensor]]:
         """Returns the embeddings from predictions."""
+
+    def _apply_preprocessor(self, tensor: torch.Tensor) -> torch.Tensor:
+        """Applies optional preprocessing before embedding extraction."""
+        if self._preprocessor is None:
+            return tensor
+
+        if hasattr(self._preprocessor, "batch_forward"):
+            return self._preprocessor.batch_forward(tensor)  # type: ignore[union-attr]
+
+        return self._preprocessor(tensor)
 
     def _get_item_metadata(
         self, metadata: Dict[str, Any] | None, local_idx: int

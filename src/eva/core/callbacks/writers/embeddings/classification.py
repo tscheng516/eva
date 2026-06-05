@@ -59,6 +59,7 @@ class ClassificationEmbeddingsWriter(base.EmbeddingsWriter):
     @override
     def _get_embeddings(self, tensor: torch.Tensor) -> torch.Tensor:
         """Returns the embeddings from predictions."""
+        tensor = self._apply_preprocessor(tensor)
         return self._backbone(tensor) if self._backbone else tensor
 
 

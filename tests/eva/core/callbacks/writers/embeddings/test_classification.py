@@ -45,6 +45,7 @@ def test_embeddings_writer(datamodule: datamodules.DataModule, model: modules.He
         callback = writers.ClassificationEmbeddingsWriter(
             output_dir=output_dir,
             dataloader_idx_map={0: "train", 1: "val", 2: "test"},
+            preprocessor=nn.Identity(),
             backbone=nn.Flatten(),
             metadata_keys=metadata_keys,
             overwrite=True,

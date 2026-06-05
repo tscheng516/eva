@@ -15,6 +15,7 @@ from typing_extensions import override
 
 from eva.core import utils
 from eva.core.callbacks.writers.embeddings.typings import QUEUE_ITEM
+from eva.core.data.datasets import embeddings as embeddings_dataset
 from eva.core.models.modules.typings import INPUT_BATCH
 from eva.core.utils import distributed as dist_utils
 from eva.core.utils import multiprocessing as eva_multiprocessing
@@ -31,6 +32,7 @@ class EmbeddingsWriter(callbacks.BasePredictionWriter, abc.ABC):
         metadata_keys: List[str] | None = None,
         overwrite: bool = False,
         save_every_n: int = 100,
+        cache_in_memory: bool = False,
     ) -> None:
         """Initializes a new EmbeddingsWriter instance.
 
@@ -50,6 +52,9 @@ class EmbeddingsWriter(callbacks.BasePredictionWriter, abc.ABC):
                 already present (recommended).
             save_every_n: Interval for number of iterations to save the embeddings to disk.
                 During this interval, the embeddings are accumulated in memory.
+            cache_in_memory: Whether to also cache generated embeddings in process RAM,
+                keyed by output directory and split, so subsequent embedding datasets can
+                preload from RAM without reloading from disk in the same process.
         """
         super().__init__(write_interval="batch")
 
@@ -59,6 +64,7 @@ class EmbeddingsWriter(callbacks.BasePredictionWriter, abc.ABC):
         self._overwrite = overwrite
         self._save_every_n = save_every_n
         self._metadata_keys = metadata_keys or []
+        self._cache_in_memory = cache_in_memory
 
         self._write_queue: multiprocessing.Queue | None = None
         self._write_process: eva_multiprocessing.Process | None = None
@@ -134,7 +140,20 @@ class EmbeddingsWriter(callbacks.BasePredictionWriter, abc.ABC):
         gathered_items = self._gather_queue_items(queue_items)
         if self._is_rank_zero:
             for item in gathered_items:
-                self._write_queue.put(item)  # type: ignore
+                queue_item = QUEUE_ITEM(*item)
+                if self._cache_in_memory and queue_item.split is not None:
+                    embedding = torch.load(
+                        io.BytesIO(queue_item.prediction_buffer.getbuffer()),
+                        map_location="cpu",
+                    )
+                    embeddings_dataset.update_embeddings_ram_cache(
+                        root=self._output_dir,
+                        split=queue_item.split,
+                        save_name=queue_item.save_name,
+                        embedding=embedding,
+                    )
+
+                self._write_queue.put(queue_item)  # type: ignore
                 self._write_process.check_exceptions()  # type: ignore
 
     @override

@@ -2,7 +2,7 @@
 trainer:
   class_path: eva.Trainer
   init_args:
-    n_runs: &N_RUNS ${oc.env:N_RUNS, 5}
+    n_runs: &N_RUNS ${oc.env:N_RUNS, 1}
     default_root_dir: &OUTPUT_ROOT ${oc.env:OUTPUT_ROOT, logs/${oc.env:MODEL_NAME, dino_vits16}/offline/bach}
     max_steps: &MAX_STEPS ${oc.env:MAX_STEPS, 12500}
     checkpoint_type: ${oc.env:CHECKPOINT_TYPE, best}
@@ -35,6 +35,7 @@ trainer:
           dataloader_idx_map:
             0: train
             1: val
+          cache_in_memory: true
           backbone:
             class_path: eva.vision.models.ModelFromRegistry
             init_args:

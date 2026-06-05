@@ -25,6 +25,35 @@ default_column_mapping: Dict[str, str] = {
 """The default column mapping of the variables to the manifest columns."""
 
 
+_embeddings_ram_cache: Dict[Tuple[str, str], Dict[str, Any]] = {}
+"""Process-local cache of embeddings keyed by (root, split) and manifest path."""
+
+
+def update_embeddings_ram_cache(root: str, split: str, save_name: str, embedding: Any) -> None:
+    """Stores one embedding object in the process-local RAM cache."""
+    cache_key = (os.path.abspath(root), split)
+    if cache_key not in _embeddings_ram_cache:
+        _embeddings_ram_cache[cache_key] = {}
+    _embeddings_ram_cache[cache_key][save_name] = embedding
+
+
+def read_embeddings_ram_cache(
+    root: str, split: Literal["train", "val", "test"] | None, filenames: List[str]
+) -> Optional[List[Any]]:
+    """Reads a split-aligned embedding list from RAM cache if fully available."""
+    if split is None:
+        return None
+
+    cache_key = (os.path.abspath(root), split)
+    split_cache = _embeddings_ram_cache.get(cache_key)
+    if split_cache is None:
+        return None
+
+    if any(filename not in split_cache for filename in filenames):
+        return None
+    return [split_cache[filename] for filename in filenames]
+
+
 class EmbeddingsDataset(base.Dataset, Generic[TargetType]):
     """Abstract base class for embedding datasets."""
 
@@ -91,7 +120,12 @@ class EmbeddingsDataset(base.Dataset, Generic[TargetType]):
     def setup(self):
         self._data = self._load_manifest()
         if self._preload:
-            self._embeddings_cache = [self.load_embeddings(i) for i in range(len(self))]
+            filenames: List[str] = self._data[self._column_mapping["path"]].tolist()
+            cached_embeddings = read_embeddings_ram_cache(self._root, self._split, filenames)
+            if cached_embeddings is not None:
+                self._embeddings_cache = cached_embeddings
+            else:
+                self._embeddings_cache = [self.load_embeddings(i) for i in range(len(self))]
 
     @abc.abstractmethod
     def __len__(self) -> int:

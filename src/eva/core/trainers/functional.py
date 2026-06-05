@@ -1,8 +1,10 @@
 """Fit session related functions."""
 
 from itertools import zip_longest
+from numbers import Integral
 from typing import List, Literal, Tuple
 
+import loguru
 from lightning.pytorch.utilities.types import _EVALUATE_OUTPUT, _PREDICT_OUTPUT
 
 from eva.core.data import datamodules
@@ -107,9 +109,20 @@ def run_evaluation(
     validation_scores = None
     test_scores = None
 
+    fit_ran = False
     if "fit" in stages:
         trainer.fit(model, datamodule=datamodule)
-    if "validate" in stages and getattr(datamodule.datasets, "val", None) is not None:
+        fit_ran = True
+
+    has_val_dataset = getattr(datamodule.datasets, "val", None) is not None
+    skip_post_fit_validate = _should_skip_post_fit_validation(trainer, fit_ran=fit_ran)
+    if "validate" in stages and has_val_dataset and skip_post_fit_validate:
+        loguru.logger.info(
+            "Skipping post-fit validate stage because fit ended at step boundary "
+            f"(global_step={trainer.global_step}, val_check_interval={trainer.val_check_interval})."
+        )
+    elif "validate" in stages and has_val_dataset:
+        loguru.logger.info("Running post-fit validate stage.")
         validation_scores = _evaluate_stage(
             trainer,
             model,
@@ -129,6 +142,39 @@ def run_evaluation(
         )
     trainer.finish_logger_run(run_id)
     return validation_scores, test_scores
+
+
+def _should_skip_post_fit_validation(
+    trainer: eva_trainer.Trainer,
+    *,
+    fit_ran: bool,
+) -> bool:
+    """Checks whether post-fit validate is redundant in step-based training.
+
+    This skip is only applied when fit has already run and ended exactly at a
+    validation step boundary in a max_steps-constrained run.
+    """
+    if not fit_ran:
+        return False
+
+    max_steps = getattr(trainer, "max_steps", None)
+    global_step = getattr(trainer, "global_step", None)
+    val_check_interval = getattr(trainer, "val_check_interval", None)
+
+    if isinstance(max_steps, bool) or not isinstance(max_steps, Integral) or max_steps <= 0:
+        return False
+    if isinstance(global_step, bool) or not isinstance(global_step, Integral) or global_step <= 0:
+        return False
+    if global_step != max_steps:
+        return False
+    if (
+        isinstance(val_check_interval, bool)
+        or not isinstance(val_check_interval, Integral)
+        or val_check_interval <= 0
+    ):
+        return False
+
+    return global_step % val_check_interval == 0
 
 
 def infer_model(

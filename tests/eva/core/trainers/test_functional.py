@@ -189,3 +189,98 @@ def test_run_evaluation_session_keeps_dataset_results_grouped_when_recording_dis
 
     recorder.update.assert_called_once_with(validation_scores, test_scores)
     recorder.save.assert_called_once_with()
+
+
+def test_run_evaluation_skips_post_fit_validate_when_step_boundary_matches_max_steps() -> None:
+    """Tests post-fit validate skip when fit already validated at the terminal step."""
+    trainer = mock.Mock()
+    trainer.max_steps = 1000
+    trainer.global_step = 1000
+    trainer.val_check_interval = 100
+    model = mock.Mock()
+    datamodule = mock.Mock()
+    datamodule.datasets = mock.Mock(val=mock.Mock(), test=None)
+
+    with (
+        mock.patch.object(functional._utils, "clone", side_effect=[trainer, model]),
+        mock.patch.object(functional, "_evaluate_stage") as evaluate_stage,
+    ):
+        validation_scores, test_scores = functional.run_evaluation(
+            base_trainer=mock.Mock(),
+            base_model=mock.Mock(),
+            datamodule=datamodule,
+            stages=["fit", "validate"],
+        )
+
+    trainer.fit.assert_called_once_with(model, datamodule=datamodule)
+    evaluate_stage.assert_not_called()
+    assert validation_scores is None
+    assert test_scores is None
+
+
+def test_run_evaluation_runs_post_fit_validate_when_step_boundary_not_reached() -> None:
+    """Tests post-fit validate runs when fit does not end on a validation step boundary."""
+    trainer = mock.Mock()
+    trainer.max_steps = 1000
+    trainer.global_step = 950
+    trainer.val_check_interval = 100
+    model = mock.Mock()
+    datamodule = mock.Mock()
+    datamodule.datasets = mock.Mock(val=mock.Mock(), test=None)
+
+    with (
+        mock.patch.object(functional._utils, "clone", side_effect=[trainer, model]),
+        mock.patch.object(functional, "_evaluate_stage", return_value=[{"val/acc": 0.9}]) as evaluate_stage,
+    ):
+        validation_scores, test_scores = functional.run_evaluation(
+            base_trainer=mock.Mock(),
+            base_model=mock.Mock(),
+            datamodule=datamodule,
+            stages=["fit", "validate"],
+        )
+
+    trainer.fit.assert_called_once_with(model, datamodule=datamodule)
+    evaluate_stage.assert_called_once_with(
+        trainer,
+        model,
+        datamodule,
+        stage="validate",
+        record_datasets_as_runs=False,
+        verbose=True,
+    )
+    assert validation_scores == [{"val/acc": 0.9}]
+    assert test_scores is None
+
+
+def test_run_evaluation_runs_validate_without_fit_even_if_divisible() -> None:
+    """Tests validate is not skipped when fit is not part of requested stages."""
+    trainer = mock.Mock()
+    trainer.max_steps = 1000
+    trainer.global_step = 1000
+    trainer.val_check_interval = 100
+    model = mock.Mock()
+    datamodule = mock.Mock()
+    datamodule.datasets = mock.Mock(val=mock.Mock(), test=None)
+
+    with (
+        mock.patch.object(functional._utils, "clone", return_value=trainer),
+        mock.patch.object(functional, "_evaluate_stage", return_value=[{"val/acc": 0.8}]) as evaluate_stage,
+    ):
+        validation_scores, test_scores = functional.run_evaluation(
+            base_trainer=mock.Mock(),
+            base_model=model,
+            datamodule=datamodule,
+            stages=["validate"],
+        )
+
+    trainer.fit.assert_not_called()
+    evaluate_stage.assert_called_once_with(
+        trainer,
+        model,
+        datamodule,
+        stage="validate",
+        record_datasets_as_runs=False,
+        verbose=True,
+    )
+    assert validation_scores == [{"val/acc": 0.8}]
+    assert test_scores is None

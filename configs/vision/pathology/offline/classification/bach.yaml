@@ -75,11 +75,13 @@ data:
           root: *DATASET_EMBEDDINGS_ROOT
           manifest_file: manifest.csv
           split: train
+          preload: true
       val:
         class_path: eva.datasets.EmbeddingsClassificationDataset
         init_args:
           <<: *DATASET_ARGS
           split: val
+          preload: true
       predict:
         - class_path: eva.vision.datasets.BACH
           init_args: &PREDICT_DATASET_ARGS

@@ -3,7 +3,7 @@
 import abc
 import multiprocessing
 import os
-from typing import Callable, Dict, Generic, Literal, Tuple, TypeVar
+from typing import Any, Callable, Dict, Generic, List, Literal, Optional, Tuple, TypeVar
 
 import pandas as pd
 import torch
@@ -36,6 +36,7 @@ class EmbeddingsDataset(base.Dataset, Generic[TargetType]):
         column_mapping: Dict[str, str] = default_column_mapping,
         embeddings_transforms: Callable | None = None,
         target_transforms: Callable | None = None,
+        preload: bool = False,
     ) -> None:
         """Initialize dataset.
 
@@ -54,6 +55,9 @@ class EmbeddingsDataset(base.Dataset, Generic[TargetType]):
                 values which are altered or missing.
             embeddings_transforms: A function/transform that transforms the embedding.
             target_transforms: A function/transform that transforms the target.
+            preload: Whether to load all embeddings into RAM during setup. When
+                enabled, each embedding is loaded once and served from memory on
+                every subsequent access, eliminating per-step disk I/O.
         """
         super().__init__()
 
@@ -63,8 +67,10 @@ class EmbeddingsDataset(base.Dataset, Generic[TargetType]):
         self._column_mapping = default_column_mapping | column_mapping
         self._embeddings_transforms = embeddings_transforms
         self._target_transforms = target_transforms
+        self._preload = preload
 
         self._data: pd.DataFrame
+        self._embeddings_cache: Optional[List[Any]] = None
 
         self._set_multiprocessing_start_method()
 
@@ -84,6 +90,8 @@ class EmbeddingsDataset(base.Dataset, Generic[TargetType]):
     @override
     def setup(self):
         self._data = self._load_manifest()
+        if self._preload:
+            self._embeddings_cache = [self.load_embeddings(i) for i in range(len(self))]
 
     @abc.abstractmethod
     def __len__(self) -> int:
@@ -98,7 +106,10 @@ class EmbeddingsDataset(base.Dataset, Generic[TargetType]):
         Returns:
             A data sample and its target.
         """
-        embeddings = self.load_embeddings(index)
+        if self._embeddings_cache is not None:
+            embeddings = self._embeddings_cache[index]
+        else:
+            embeddings = self.load_embeddings(index)
         target = self.load_target(index)
         return self._apply_transforms(embeddings, target)
 

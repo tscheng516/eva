@@ -37,12 +37,11 @@ trainer:
             1: val
           cache_in_memory: ${oc.decode:${oc.env:CACHE_IN_MEMORY, true}}
           preprocessor:
-            class_path: eva.vision.data.transforms.common.ResizeAndCropTriton
+            class_path: ${oc.env:PREDICT_PREPROCESSOR_CLASS_PATH, eva.vision.data.transforms.common.ResizeAndCropTriton}
             init_args:
               size: ${oc.env:RESIZE_DIM, 224}
               mean: ${oc.env:NORMALIZE_MEAN, [0.485, 0.456, 0.406]}
               std: ${oc.env:NORMALIZE_STD, [0.229, 0.224, 0.225]}
-              use_triton_scale_normalize: ${oc.decode:${oc.env:USE_TRITON_RESCALE_NORMALIZE, true}}
           backbone:
             class_path: eva.vision.models.ModelFromRegistry
             init_args:

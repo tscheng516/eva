@@ -35,8 +35,17 @@ fi
 # Embeddings writer options
 : "${CACHE_IN_MEMORY:=true}"
 
-# Triton preprocessor options
-: "${USE_TRITON_RESCALE_NORMALIZE:=true}"
+# Preprocessor options for predict callback (triton|original)
+: "${PREPROCESSOR_IMPL:=triton}"
+
+if [[ "${PREPROCESSOR_IMPL}" == "triton" ]]; then
+  PREDICT_PREPROCESSOR_CLASS_PATH="eva.vision.data.transforms.common.ResizeAndCropTriton"
+elif [[ "${PREPROCESSOR_IMPL}" == "original" ]]; then
+  PREDICT_PREPROCESSOR_CLASS_PATH="eva.vision.data.transforms.common.ResizeAndCrop"
+else
+  echo "Invalid PREPROCESSOR_IMPL='${PREPROCESSOR_IMPL}'. Use 'triton' or 'original'." >&2
+  exit 1
+fi
 
 # Output roots
 # : "${OUTPUT_ROOT:=./logs/dino_vits16/offline/bach}"
@@ -71,7 +80,8 @@ export PREDICT_BATCH_SIZE
 export BATCH_SIZE
 export N_DATA_WORKERS
 export CACHE_IN_MEMORY
-export USE_TRITON_RESCALE_NORMALIZE
+export PREPROCESSOR_IMPL
+export PREDICT_PREPROCESSOR_CLASS_PATH
 export OUTPUT_ROOT
 export EMBEDDINGS_ROOT
 
@@ -81,7 +91,8 @@ echo "CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES}"
 echo "MODEL_NAME=${MODEL_NAME}"
 echo "N_RUNS=${N_RUNS}, MAX_STEPS=${MAX_STEPS}"
 echo "PREDICT_BATCH_SIZE=${PREDICT_BATCH_SIZE}, BATCH_SIZE=${BATCH_SIZE}, N_DATA_WORKERS=${N_DATA_WORKERS}"
-echo "CACHE_IN_MEMORY=${CACHE_IN_MEMORY}, USE_TRITON_RESCALE_NORMALIZE=${USE_TRITON_RESCALE_NORMALIZE}"
+echo "CACHE_IN_MEMORY=${CACHE_IN_MEMORY}, PREPROCESSOR_IMPL=${PREPROCESSOR_IMPL}"
+echo "PREDICT_PREPROCESSOR_CLASS_PATH=${PREDICT_PREPROCESSOR_CLASS_PATH}"
 # echo "OUTPUT_ROOT=${OUTPUT_ROOT}"
 echo "EMBEDDINGS_ROOT=${EMBEDDINGS_ROOT}"
 echo "PROFILE_ROOT=${PROFILE_ROOT}"

@@ -1,0 +1,56 @@
+PREDICT Profiler Report
+Profile stats for: records
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                                   Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg     Self CUDA   Self CUDA %    CUDA total  CUDA time avg    # of Calls  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                          ProfilerStep*        18.02%        2.875s       100.00%       15.957s        5.319s       0.000us         0.00%     518.579ms     172.860ms             3  
+[pl][profile][Callback]ClassificationEmbeddingsWrite...         0.64%     101.951ms         2.57%     409.822ms     136.607ms       0.000us         0.00%     515.194ms     171.731ms             3  
+                                           Unrecognized         0.13%      20.720ms         0.13%      20.720ms     199.227us     371.726ms       253.13%     371.726ms       3.574ms           104  
+                                           aten::conv2d         0.00%      55.340us         0.54%      85.619ms      28.540ms       0.000us         0.00%     368.639ms     122.880ms             3  
+                                      aten::convolution         0.00%      26.870us         0.54%      85.564ms      28.521ms       0.000us         0.00%     368.639ms     122.880ms             3  
+                                     aten::_convolution         0.00%     145.588us         0.54%      85.537ms      28.512ms       0.000us         0.00%     368.639ms     122.880ms             3  
+                                aten::cudnn_convolution         0.38%      60.719ms         0.50%      80.280ms      26.760ms       7.689ms         5.24%     368.072ms     122.691ms             3  
+                                  cudaFuncGetAttributes         0.03%       4.711ms         0.04%       6.151ms      34.172us       0.000us         0.00%     350.643ms       1.948ms           180  
+[pl][profile][Callback]ClassificationEmbeddingsWrite...         0.00%       0.000us         0.00%       0.000us       0.000us     326.907ms       222.61%     326.907ms      81.727ms             4  
+                                           aten::linear         0.00%     672.388us         0.36%      56.788ms     394.362us       0.000us         0.00%      88.282ms     613.073us           144  
+                                            aten::addmm         0.31%      49.923ms         0.35%      55.503ms     385.439us      84.424ms        57.49%      88.282ms     613.073us           144  
+                                 ampere_sgemm_128x64_tn         0.00%       0.000us         0.00%       0.000us       0.000us      42.353ms        28.84%      42.353ms     588.233us            72  
+                                ampere_sgemm_128x128_tn         0.00%       0.000us         0.00%       0.000us       0.000us      40.877ms        27.84%      40.877ms     681.287us            60  
+                     aten::scaled_dot_product_attention         0.00%     353.590us         0.01%       2.373ms      65.919us       0.000us         0.00%      26.411ms     733.631us            36  
+          aten::_scaled_dot_product_efficient_attention         0.00%     198.390us         0.01%       2.019ms      56.097us       0.000us         0.00%      26.411ms     733.631us            36  
+                     aten::_efficient_attention_forward         0.00%     347.158us         0.01%       1.634ms      45.392us      22.813ms        15.53%      26.411ms     733.631us            36  
+fmha_cutlassF_f32_aligned_64x64_rf_sm80(PyTorchMemEf...         0.00%       0.000us         0.00%       0.000us       0.000us      22.813ms        15.53%      22.813ms     633.702us            36  
+                                             aten::gelu         0.00%     280.190us         0.04%       7.017ms     194.907us      11.992ms         8.17%      13.970ms     388.043us            36  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us      11.992ms         8.17%      11.992ms     333.118us            36  
+                                   cudaGetSymbolAddress         0.04%       6.506ms         0.04%       6.585ms       6.585ms       0.000us         0.00%       9.740ms       9.740ms             1  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+Self CPU time total: 15.957s
+Self CUDA time total: 146.853ms
+PREDICT Profiler Report
+Profile stats for: records
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                                   Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg     Self CUDA   Self CUDA %    CUDA total  CUDA time avg    # of Calls  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+[pl][profile][Callback]ClassificationEmbeddingsWrite...         0.00%       0.000us         0.00%       0.000us       0.000us     141.931ms       197.63%     141.931ms      47.310ms             3  
+                                          ProfilerStep*         1.29%       1.948ms       100.00%     150.700ms      50.233ms       0.000us         0.00%      71.816ms      23.939ms             3  
+[pl][profile][Callback]ClassificationEmbeddingsWrite...        32.30%      48.685ms        96.57%     145.542ms      48.514ms       0.000us         0.00%      68.687ms      22.896ms             3  
+                                           aten::linear         0.47%     710.919us         9.32%      14.044ms      97.528us       0.000us         0.00%      42.401ms     294.454us           144  
+                                            aten::addmm         7.46%      11.243ms         8.39%      12.638ms      87.763us      42.401ms        59.04%      42.401ms     294.454us           144  
+                                ampere_sgemm_128x128_tn         0.00%       0.000us         0.00%       0.000us       0.000us      22.755ms        31.69%      22.755ms     316.045us            72  
+                                 ampere_sgemm_128x64_tn         0.00%       0.000us         0.00%       0.000us       0.000us      14.428ms        20.09%      14.428ms     400.784us            36  
+                     aten::scaled_dot_product_attention         0.18%     269.270us         1.04%       1.574ms      43.716us       0.000us         0.00%      11.288ms     313.563us            36  
+          aten::_scaled_dot_product_efficient_attention         0.14%     210.170us         0.87%       1.304ms      36.236us       0.000us         0.00%      11.288ms     313.563us            36  
+                     aten::_efficient_attention_forward         0.23%     352.990us         0.58%     873.200us      24.256us      11.288ms        15.72%      11.288ms     313.563us            36  
+fmha_cutlassF_f32_aligned_64x64_rf_sm80(PyTorchMemEf...         0.00%       0.000us         0.00%       0.000us       0.000us      11.288ms        15.72%      11.288ms     313.563us            36  
+                                             aten::gelu         0.17%     260.779us         0.27%     404.549us      11.237us       5.519ms         7.68%       5.519ms     153.299us            36  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us       5.519ms         7.68%       5.519ms     153.299us            36  
+                                  ampere_sgemm_64x64_tn         0.00%       0.000us         0.00%       0.000us       0.000us       5.174ms         7.20%       5.174ms     143.709us            36  
+                                            aten::copy_         1.95%       2.943ms        40.68%      61.315ms      79.218us       3.946ms         5.49%       3.946ms       5.098us           774  
+                                           aten::conv2d         0.01%      21.479us         0.35%     534.259us     178.086us       0.000us         0.00%       3.812ms       1.271ms             3  
+                                      aten::convolution         0.01%      15.920us         0.34%     512.780us     170.927us       0.000us         0.00%       3.812ms       1.271ms             3  
+                                     aten::_convolution         0.04%      66.010us         0.33%     496.860us     165.620us       0.000us         0.00%       3.812ms       1.271ms             3  
+                                aten::cudnn_convolution         0.14%     209.540us         0.23%     353.870us     117.957us       3.773ms         5.25%       3.773ms       1.258ms             3  
+sm86_xmma_fprop_implicit_gemm_indexed_tf32f32_tf32f3...         0.00%       0.000us         0.00%       0.000us       0.000us       3.255ms         4.53%       3.255ms       1.085ms             3  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+Self CPU time total: 150.708ms
+Self CUDA time total: 71.817ms

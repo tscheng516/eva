@@ -1,0 +1,56 @@
+VALIDATE Profiler Report
+Profile stats for: records
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                                   Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg     Self CUDA   Self CUDA %    CUDA total  CUDA time avg    # of Calls  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                          ProfilerStep*         0.00%       0.000us         0.00%       0.000us       0.000us        1.111s    150632.92%        1.111s        1.111s             1  
+[pl][profile][LightningModule]HeadModule.on_validati...         0.00%       0.000us         0.00%       0.000us       0.000us      13.111ms      1777.54%      13.111ms      13.111ms             1  
+[pl][profile][LightningModule]HeadModule.on_validati...         0.00%       0.000us         0.00%       0.000us       0.000us       1.831ms       248.21%       1.831ms       1.831ms             1  
+                                          ProfilerStep*        98.00%        1.106s       100.00%        1.129s        1.129s       0.000us         0.00%     737.596us     737.596us             1  
+[pl][profile][LightningModule]HeadModule.on_validati...         0.53%       5.987ms         1.18%      13.368ms      13.368ms       0.000us         0.00%     437.086us     437.086us             1  
+                                            aten::copy_         0.11%       1.210ms         0.36%       4.043ms      14.491us     272.220us        36.91%     272.220us       0.976us           279  
+                                               aten::to         0.03%     344.850us         0.42%       4.700ms      18.505us       0.000us         0.00%     203.873us       0.803us           254  
+                                         aten::_to_copy         0.07%     800.769us         0.39%       4.355ms      21.669us       0.000us         0.00%     203.873us       1.014us           201  
+                       Memcpy DtoH (Device -> Pageable)         0.00%       0.000us         0.00%       0.000us       0.000us     180.641us        24.49%     180.641us       1.088us           166  
+                                          aten::argsort         0.00%      13.950us         0.04%     475.670us     118.918us       0.000us         0.00%      70.819us      17.705us             4  
+                                             aten::sort         0.01%     109.480us         0.04%     461.720us     115.430us      51.681us         7.01%      70.819us      17.705us             4  
+[pl][profile][LightningModule]HeadModule.on_validati...         0.08%     901.388us         0.20%       2.265ms       2.265ms       0.000us         0.00%      68.064us      68.064us             1  
+                         Memcpy DtoD (Device -> Device)         0.00%       0.000us         0.00%       0.000us       0.000us      57.594us         7.81%      57.594us       0.976us            59  
+void at::native::radixSortKVInPlace<-2, -1, 32, 32, ...         0.00%       0.000us         0.00%       0.000us       0.000us      51.681us         7.01%      51.681us      12.920us             4  
+                                            aten::clone         0.02%     191.630us         0.10%       1.088ms      22.208us       0.000us         0.00%      47.866us       0.977us            49  
+                                              aten::add         0.03%     315.248us         0.05%     565.877us      13.473us      44.128us         5.98%      44.128us       1.051us            42  
+                                            aten::index         0.03%     311.189us         0.05%     552.618us      32.507us      38.017us         5.15%      42.529us       2.502us            17  
+                                            aten::fill_         0.02%     234.139us         0.06%     630.169us      13.129us      41.984us         5.69%      41.984us       0.875us            48  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us      36.544us         4.95%      36.544us       0.870us            42  
+                                              aten::div         0.02%     253.569us         0.04%     468.198us      17.341us      34.975us         4.74%      34.975us       1.295us            27  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+Self CPU time total: 1.129s
+Self CUDA time total: 737.596us
+VALIDATE Profiler Report
+Profile stats for: records
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                                   Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg     Self CUDA   Self CUDA %    CUDA total  CUDA time avg    # of Calls  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                          ProfilerStep*         0.00%       0.000us         0.00%       0.000us       0.000us     888.441ms    120422.39%     888.441ms     888.441ms             1  
+[pl][profile][LightningModule]HeadModule.on_validati...         0.00%       0.000us         0.00%       0.000us       0.000us       8.799ms      1192.64%       8.799ms       8.799ms             1  
+[pl][profile][LightningModule]HeadModule.on_validati...         0.00%       0.000us         0.00%       0.000us       0.000us       1.472ms       199.48%       1.472ms       1.472ms             1  
+                                          ProfilerStep*        98.20%     884.493ms       100.00%     900.683ms     900.683ms       0.000us         0.00%     737.771us     737.771us             1  
+[pl][profile][LightningModule]HeadModule.on_validati...         0.47%       4.194ms         1.00%       8.982ms       8.982ms       0.000us         0.00%     437.802us     437.802us             1  
+                                            aten::copy_         0.08%     733.409us         0.32%       2.864ms      10.266us     271.807us        36.84%     271.807us       0.974us           279  
+                                               aten::to         0.03%     246.340us         0.36%       3.285ms      12.934us       0.000us         0.00%     203.646us       0.802us           254  
+                                         aten::_to_copy         0.06%     512.559us         0.34%       3.039ms      15.119us       0.000us         0.00%     203.646us       1.013us           201  
+                       Memcpy DtoH (Device -> Pageable)         0.00%       0.000us         0.00%       0.000us       0.000us     180.319us        24.44%     180.319us       1.086us           166  
+                                          aten::argsort         0.00%       9.940us         0.03%     306.679us      76.670us       0.000us         0.00%      71.236us      17.809us             4  
+                                             aten::sort         0.01%      74.750us         0.03%     296.739us      74.185us      52.193us         7.07%      71.236us      17.809us             4  
+[pl][profile][LightningModule]HeadModule.on_validati...         0.09%     766.828us         0.20%       1.825ms       1.825ms       0.000us         0.00%      67.968us      67.968us             1  
+                         Memcpy DtoD (Device -> Device)         0.00%       0.000us         0.00%       0.000us       0.000us      57.408us         7.78%      57.408us       0.973us            59  
+void at::native::radixSortKVInPlace<-2, -1, 32, 32, ...         0.00%       0.000us         0.00%       0.000us       0.000us      52.193us         7.07%      52.193us      13.048us             4  
+                                            aten::clone         0.01%     114.720us         0.07%     671.690us      13.708us       0.000us         0.00%      47.807us       0.976us            49  
+                                              aten::add         0.02%     213.900us         0.04%     403.670us       9.611us      44.287us         6.00%      44.287us       1.054us            42  
+                                            aten::index         0.02%     163.260us         0.04%     337.249us      19.838us      38.400us         5.20%      42.944us       2.526us            17  
+                                            aten::fill_         0.02%     135.289us         0.04%     347.019us       7.230us      41.952us         5.69%      41.952us       0.874us            48  
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us      36.512us         4.95%      36.512us       0.869us            42  
+                                              aten::div         0.02%     161.090us         0.03%     291.030us      10.779us      34.945us         4.74%      34.945us       1.294us            27  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+Self CPU time total: 900.709ms
+Self CUDA time total: 737.771us

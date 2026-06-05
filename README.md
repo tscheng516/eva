@@ -3,6 +3,8 @@
 This fork is a small project focused on transformer fine-tuning speedup for offline BACH evaluation.
 It keeps the EVA pipeline and adds practical runtime optimizations plus profiling workflows.
 
+**Total wall-time speedup: 2m23s -> 51s (-64.3% time)**
+
 ## Installation
 
 Install from PyPI:

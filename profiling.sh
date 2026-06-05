@@ -2,6 +2,17 @@
 set -euo pipefail
 
 ############################################
+# Environment bootstrap
+############################################
+if command -v conda >/dev/null 2>&1; then
+  eval "$(conda shell.bash hook)"
+  conda activate eva
+else
+  echo "conda not found on PATH. Please install conda or update PATH." >&2
+  exit 1
+fi
+
+############################################
 # User settings (override via env if needed)
 ############################################
 : "${CONFIG:=configs/vision/pathology/offline/classification/bach.yaml}"
@@ -10,7 +21,7 @@ set -euo pipefail
 
 # Keep short for profiling baseline
 : "${N_RUNS:=1}" # for profiling
-: "${MAX_STEPS:=100}" # set to 100 as profiling takes long
+: "${MAX_STEPS:=1000}" # set to 100 as profiling takes long
 
 # For per-slide wall-time in predict
 : "${PREDICT_BATCH_SIZE:=64}"
@@ -21,10 +32,16 @@ set -euo pipefail
 # Data loader workers
 : "${N_DATA_WORKERS:=4}"
 
+# Embeddings writer options
+: "${CACHE_IN_MEMORY:=true}"
+
+# Triton preprocessor options
+: "${USE_TRITON_RESCALE_NORMALIZE:=true}"
+
 # Output roots
 # : "${OUTPUT_ROOT:=./logs/dino_vits16/offline/bach}"
 : "${EMBEDDINGS_ROOT:=./data/embeddings/universal}"
-: "${PROFILE_ROOT:=./profiles/bach0}"
+: "${PROFILE_ROOT:=./profiles/bach}"
 
 # Toggle heavy passes
 : "${RUN_NSYS:=1}"
@@ -53,6 +70,8 @@ export MAX_STEPS
 export PREDICT_BATCH_SIZE
 export BATCH_SIZE
 export N_DATA_WORKERS
+export CACHE_IN_MEMORY
+export USE_TRITON_RESCALE_NORMALIZE
 export OUTPUT_ROOT
 export EMBEDDINGS_ROOT
 
@@ -62,6 +81,7 @@ echo "CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES}"
 echo "MODEL_NAME=${MODEL_NAME}"
 echo "N_RUNS=${N_RUNS}, MAX_STEPS=${MAX_STEPS}"
 echo "PREDICT_BATCH_SIZE=${PREDICT_BATCH_SIZE}, BATCH_SIZE=${BATCH_SIZE}, N_DATA_WORKERS=${N_DATA_WORKERS}"
+echo "CACHE_IN_MEMORY=${CACHE_IN_MEMORY}, USE_TRITON_RESCALE_NORMALIZE=${USE_TRITON_RESCALE_NORMALIZE}"
 # echo "OUTPUT_ROOT=${OUTPUT_ROOT}"
 echo "EMBEDDINGS_ROOT=${EMBEDDINGS_ROOT}"
 echo "PROFILE_ROOT=${PROFILE_ROOT}"

@@ -56,10 +56,12 @@ class ResizeAndCropTriton:
         size: int | Sequence[int] = 224,
         mean: Sequence[float] = (0.5, 0.5, 0.5),
         std: Sequence[float] = (0.5, 0.5, 0.5),
+        use_triton_scale_normalize: bool = True,
     ) -> None:
         self._size = size
         self._mean = torch.tensor(mean, dtype=torch.float32)
         self._std = torch.tensor(std, dtype=torch.float32)
+        self._use_triton_scale_normalize = use_triton_scale_normalize
 
         if self._mean.numel() != 3 or self._std.numel() != 3:
             raise ValueError("ResizeAndCropTriton currently supports exactly 3 channels.")
@@ -91,8 +93,6 @@ class ResizeAndCropTriton:
             raise ValueError(f"Expected 3 channels, got {images.shape[1]}")
         if not images.is_cuda:
             raise ValueError("ResizeAndCropTriton requires CUDA input tensors.")
-        if not _TRITON_AVAILABLE:
-            raise ImportError("Triton is not installed. Install `triton` to use ResizeAndCropTriton.")
 
         resized = self._resize_keep_aspect(images)
         cropped = self._center_crop(resized)
@@ -101,6 +101,12 @@ class ResizeAndCropTriton:
 
         mean = self._mean.to(device=cropped.device)
         std = self._std.to(device=cropped.device)
+
+        if not self._use_triton_scale_normalize:
+            return self._torch_scale_and_normalize(cropped, mean, std)
+
+        if not _TRITON_AVAILABLE:
+            raise ImportError("Triton is not installed. Install `triton` to use ResizeAndCropTriton.")
 
         output = torch.empty_like(cropped, dtype=torch.float32)
         total_elements = output.numel()
@@ -119,6 +125,15 @@ class ResizeAndCropTriton:
             BLOCK_SIZE=block_size,
         )
         return output
+
+    def _torch_scale_and_normalize(
+        self, images: torch.Tensor, mean: torch.Tensor, std: torch.Tensor
+    ) -> torch.Tensor:
+        """Reference GPU path for scale+normalize when Triton fusion is disabled."""
+        images = images.to(torch.float32)
+        mean = mean.view(1, -1, 1, 1)
+        std = std.view(1, -1, 1, 1)
+        return (images / 255.0 - mean) / std
 
     def _resize_keep_aspect(self, images: torch.Tensor) -> torch.Tensor:
         """Resizes NCHW images with torchvision-like short-side semantics."""

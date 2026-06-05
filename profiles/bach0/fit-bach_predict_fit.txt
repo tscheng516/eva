@@ -1,0 +1,28 @@
+FIT Profiler Report
+Profile stats for: records
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                                   Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg     Self CUDA   Self CUDA %    CUDA total  CUDA time avg    # of Calls  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                          ProfilerStep*         0.00%       0.000us         0.00%       0.000us       0.000us        8.480s     80106.09%        8.480s     529.976ms            16  
+[pl][profile][LightningModule]HeadModule.on_validati...         0.00%       0.000us         0.00%       0.000us       0.000us     190.755ms      1802.04%     190.755ms      31.792ms             6  
+[pl][profile][LightningModule]HeadModule.on_validati...         0.00%       0.000us         0.00%       0.000us       0.000us      88.387ms       834.99%      88.387ms      14.731ms             6  
+[pl][module]torchmetrics.classification.auroc.Multic...         0.00%       0.000us         0.00%       0.000us       0.000us      70.035ms       661.61%      70.035ms       7.004ms            10  
+[pl][profile][LightningModule]HeadModule.on_train_ba...         0.00%       0.000us         0.00%       0.000us       0.000us      25.910ms       244.77%      25.910ms       2.879ms             9  
+[pl][module]torchmetrics.classification.f_beta.Multi...         0.00%       0.000us         0.00%       0.000us       0.000us      20.453ms       193.22%      20.453ms       2.045ms            10  
+[pl][module]torchmetrics.classification.accuracy.Mul...         0.00%       0.000us         0.00%       0.000us       0.000us      20.124ms       190.11%      20.124ms       2.012ms            10  
+[pl][module]torchmetrics.classification.precision_re...         0.00%       0.000us         0.00%       0.000us       0.000us      18.909ms       178.63%      18.909ms       1.891ms            10  
+[pl][module]torchmetrics.classification.precision_re...         0.00%       0.000us         0.00%       0.000us       0.000us      18.184ms       171.78%      18.184ms       1.818ms            10  
+                                          ProfilerStep*        55.01%        7.620s        62.11%        8.604s     537.764ms       0.000us         0.00%      10.707ms     669.202us            16  
+[pl][profile][Callback]ModelCheckpoint{'monitor': 'v...         0.00%       0.000us         0.00%       0.000us       0.000us       7.383ms        69.75%       7.383ms       1.477ms             5  
+[pl][module]eva.core.metrics.average_loss.AverageLos...         0.00%       0.000us         0.00%       0.000us       0.000us       6.643ms        62.76%       6.643ms     664.310us            10  
+[pl][profile][LightningModule]HeadModule.on_validati...         0.00%       0.000us         0.00%       0.000us       0.000us       6.510ms        61.50%       6.510ms       1.302ms             5  
+                        [pl][profile]run_training_epoch         1.25%     172.529ms        42.75%        5.922s        1.184s       0.000us         0.00%       6.431ms       1.286ms             5  
+[pl][profile][LightningModule]HeadModule.on_train_ba...         0.27%      36.978ms         1.50%     207.852ms      20.785ms       0.000us         0.00%       5.900ms     589.979us            10  
+[pl][module]torchmetrics.collections.MetricCollectio...         0.03%       3.767ms         1.21%     168.169ms      16.817ms       0.000us         0.00%       5.853ms     585.298us            10  
+[pl][profile][LightningModule]HeadModule.transfer_ba...         0.00%       0.000us         0.00%       0.000us       0.000us       4.261ms        40.26%       4.261ms     284.088us            15  
+[pl][module]torchmetrics.classification.auroc.Multic...         0.12%      16.945ms         0.52%      72.422ms       7.242ms       0.000us         0.00%       2.929ms     292.943us            10  
+[pl][profile][LightningModule]HeadModule.on_validati...         0.31%      43.045ms         1.43%     197.728ms      32.955ms       0.000us         0.00%       2.774ms     462.392us             6  
+[pl][profile][Callback]EarlyStopping{'monitor': 'val...         0.00%       0.000us         0.00%       0.000us       0.000us       2.264ms        21.39%       2.264ms     452.802us             5  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+Self CPU time total: 13.853s
+Self CUDA time total: 10.585ms

@@ -30,6 +30,10 @@ set -euo pipefail
 : "${RUN_NSYS:=1}"
 : "${RUN_NCU:=0}"
 
+# Track only the PyTorch-profiler run in Weights & Biases.
+: "${WANDB_PROJECT:=eva}"
+: "${WANDB_RUN_NAME:=bach}"
+
 ############################################
 # Paths
 ############################################
@@ -61,6 +65,8 @@ echo "PREDICT_BATCH_SIZE=${PREDICT_BATCH_SIZE}, BATCH_SIZE=${BATCH_SIZE}, N_DATA
 # echo "OUTPUT_ROOT=${OUTPUT_ROOT}"
 echo "EMBEDDINGS_ROOT=${EMBEDDINGS_ROOT}"
 echo "PROFILE_ROOT=${PROFILE_ROOT}"
+echo "WANDB_PROJECT=${WANDB_PROJECT}"
+echo "WANDB_RUN_NAME=${WANDB_RUN_NAME}"
 echo
 
 ############################################
@@ -68,8 +74,10 @@ echo
 ############################################
 echo "=== [1/3] PyTorch Profiler: predict_fit ==="
 rm -rf "${EMBEDDINGS_ROOT}/${MODEL_NAME}/bach"
+WANDB_RUN_NAME="${WANDB_RUN_NAME}" \
 python -m eva predict_fit \
   --config "${CONFIG}" \
+  --trainer.init_args.logger='[{"class_path":"lightning.pytorch.loggers.WandbLogger","init_args":{"project":"'"${WANDB_PROJECT}"'","save_dir":"logs","log_model":false}}]' \
   --trainer.init_args.profiler.class_path lightning.pytorch.profilers.PyTorchProfiler \
   --trainer.init_args.profiler.init_args.dirpath "${PT_DIR}" \
   --trainer.init_args.profiler.init_args.filename bach_predict_fit \
